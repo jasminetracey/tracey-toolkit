@@ -1,0 +1,11 @@
+{
+  "name": "tracey-toolkit",
+  "displayName": "Tracey's Toolkit",
+  "description": "Personal Claude Code commands and skills, shared across devices",
+  "author": {
+    "name": "Jasmine Tracey",
+    "email": "jasmine@zaengle.com"
+  },
+  "homepage": "https://github.com/jasminetracey/tracey-toolkit",
+  "repository": "https://github.com/jasminetracey/tracey-toolkit"
+}

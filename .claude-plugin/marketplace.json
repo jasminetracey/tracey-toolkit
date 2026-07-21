@@ -1,0 +1,14 @@
+{
+  "name": "tracey-personal",
+  "owner": {
+    "name": "Jasmine Tracey",
+    "email": "jasmine@zaengle.com"
+  },
+  "plugins": [
+    {
+      "name": "tracey-toolkit",
+      "source": "./plugins/tracey-toolkit",
+      "description": "Personal Claude Code commands and skills, shared across devices"
+    }
+  ]
+}
