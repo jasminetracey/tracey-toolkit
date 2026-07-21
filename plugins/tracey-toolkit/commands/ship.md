@@ -16,7 +16,8 @@ Follow these steps exactly. **Never commit work I have not reviewed** (per globa
 ## 2. Review (this is the gate — do not skip)
 - Review **only the changed lines**, not pre-existing code. (I've repeatedly had to say "review only changed stuff, not existing stuff" — respect that.)
 - Run the `review` command (five-reviewer committee process) on the diff. It runs in diff-aware mode by default, so it will focus on the changed lines.
-- Surface anything I should look at, then **show me the staged diff summary and stop for my confirmation** before committing.
+- Surface anything I should look at, applying the `i-have-adhd` skill's rules: lead with the action needed (fix something first, or clear to commit), not a recap of what the review checked.
+- Then **show me the staged diff summary and stop for my confirmation** before committing.
 
 ## 3. Commit
 - Stage intentionally — do **not** `git add .` blindly. Exclude `CLAUDE.md`, `plans/`, and `.planning/` (global rule).

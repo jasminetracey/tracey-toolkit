@@ -130,11 +130,16 @@ After all 5 reviews complete:
 
 ### Phase 4 — Final Report
 
+Apply the `i-have-adhd` skill's output rules to everything below: no preamble, no closing recap, matter-of-fact tone on errors.
+
 #### Summary Stats
 
-Start the report with a one-line summary:
+Start the report with a one-line summary, then immediately name the single most urgent fix as its own line — before any table:
 
 > **X critical, Y high, Z low** across N files. M findings disputed.
+> **Do first:** fix `file:line` — one-line reason.
+
+If nothing is critical or high, skip the "Do first" line.
 
 #### Findings Tables
 
@@ -158,7 +163,7 @@ Present findings as a markdown table with these columns:
 - **Flagged By**: which reviewer(s) raised it (e.g. "Security", "Perf + Maint", "All 3")
 - **Recommended Fix**: brief actionable suggestion
 
-Use a separate table for each confidence group (Consensus, Validated, Disputed, Dismissed).
+Use a separate table for each confidence group (Consensus, Validated, Disputed, Dismissed). If a table would exceed 5 rows, split it into "Fix now" (critical/high) and "Later" (low) sub-groups instead of one long list.
 
 For **disputed findings**, add a plain-Markdown reasoning block below the table showing both sides. Do NOT use HTML (`<details>`/`<summary>`) — this renders in a terminal that shows raw HTML tags literally. Use this format instead:
 
