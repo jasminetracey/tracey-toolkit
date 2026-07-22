@@ -1,6 +1,6 @@
 ---
 description: Critical code review with findings presented as an actionable plan
-argument-hint: [file, folder, commit-ish (abc123 | HEAD~2 | main..HEAD | --last N), or description]
+argument-hint: [target: file | folder | commit-ish (abc123 | HEAD~2 | main..HEAD | --last N)] [--tier N | --deep | --quick | --full]
 ---
 
 Review $ARGUMENTS using a five-reviewer committee process.
@@ -88,6 +88,49 @@ Even in diff mode, reviewers should read surrounding context to understand the c
 
 ## Review Process
 
+### Phase 0 — Triage & Sizing (pick the reviewer tier)
+
+Not every change deserves five reviewers. Before anything else, size the change and choose a **tier** that sets how many reviewer lenses to spawn. Measure the diff first:
+
+```bash
+git diff --stat <target>      # files touched + lines changed
+git diff <target> | wc -l     # rough total diff size
+```
+
+**Base tier by size** (changed lines = added + modified, ignoring pure whitespace/lockfiles/generated assets):
+
+| Tier | Change size | Reviewers | Lenses |
+|------|-------------|-----------|--------|
+| **1 — Trivial** | ≤ ~15 lines, 1 file (copy/comment/config/version bump) | **1** | one combined reviewer: Correctness + Bugs + Simplification |
+| **2 — Small** | ≤ ~100 lines, few files | **2** | Security & Correctness · Structural Simplification |
+| **3 — Medium** | ≤ ~400 lines | **3** | Security & Correctness · Bugs & Blunders · Structural Simplification |
+| **4 — Large** | ≤ ~800 lines or many files | **4** | + Maintainability & Architecture |
+| **5 — Major** | > ~800 lines, broad surface | **5** | + Performance & Scalability (the full committee) |
+
+**Risk escalators — bump up at least one tier (to a minimum of 3) if the diff touches any of:**
+
+- Authentication, authorization, permissions, or session handling
+- Money, payments, billing, orders, or pricing
+- Database migrations or schema changes
+- Raw output / user input handling (`|raw`, SQL, deserialization, file uploads)
+- Shared/canonical code many callers depend on (base classes, global helpers, core services)
+- Deleted or disabled tests, or a feature shipping with **no** tests
+- Anything the user's request flags as sensitive or high-stakes
+
+A tiny diff in an auth guard is **not** trivial — escalate it. When size and risk disagree, risk wins.
+
+**Manual override** (takes precedence over auto-triage):
+
+- `--tier N` (1–5) or `--reviewers N` — force a specific count
+- `--deep` — force tier 5
+- `--quick` — force tier 1 (skip escalators; use only when you're sure)
+
+**Announce the decision before proceeding**, e.g.:
+
+> Triage: **Tier 3 (Medium)** — 187 lines across 4 files, touches an auth policy (risk-escalated from 2). Spawning 3 reviewers. (Override with `--tier N`.)
+
+Then run the rest of the process with that reviewer set. Everywhere below that says "5 reviewers," use the **tier's** reviewer count and lens list instead.
+
 ### Phase 1 — Git Blame Context
 
 Before spawning reviewers, run `git blame` on the target files. For each region of code under review, note:
@@ -99,7 +142,7 @@ Pass this context to the reviewers. Code that has been stable for 6+ months and 
 
 ### Phase 2 — Parallel Independent Reviews
 
-Spawn **5 critical-code-reviewer agents in parallel**, each with the same target code (plus blame context) but a different primary lens:
+Spawn **the tier's number of critical-code-reviewer agents in parallel** (see Phase 0), each with the same target code (plus blame context) but a different primary lens. Use the lenses listed for the chosen tier, drawn from the five below. (Tier 1 spawns a single reviewer that combines Security & Correctness, Bugs & Blunders, and Structural Simplification into one pass.)
 
 1. **Security & Correctness** — prioritize vulnerabilities, auth gaps, input validation, logic errors, edge cases, and data integrity
 2. **Performance & Scalability** — prioritize query efficiency, memory usage, caching, N+1 problems (Craft element queries in loops, uneager-loaded Eloquent relations, Filament table columns hitting relations per-row), and load behavior
@@ -122,11 +165,17 @@ Each reviewer still performs a full review, but leads with their assigned lens. 
 
 ### Phase 3 — Diff & Cross-Validation
 
-After all 5 reviews complete:
+Cross-validation scales with the tier — a single reviewer has no peers to cross-check against, so don't burn agents proving it right:
+
+- **Tier 1** — skip this phase entirely. Report the single reviewer's findings directly.
+- **Tier 2** — peer-review only **critical/high** unique findings.
+- **Tier 3+** — full cross-validation of all unique findings.
+
+When it runs, after the reviews complete:
 
 1. **Merge** — collect all findings into a single list, deduplicating items found by multiple reviewers
 2. **Identify unique findings** — any finding raised by only one reviewer
-3. **Peer review unique findings** — for each unique finding, spawn a critical-code-reviewer agent asking: "Reviewer N flagged this issue. Read the relevant code and determine: is this a valid concern, a false positive, or overstated in severity?" Include the finding details and file context.
+3. **Peer review unique findings** — for each unique finding (subject to the tier scope above), spawn a critical-code-reviewer agent asking: "Reviewer N flagged this issue. Read the relevant code and determine: is this a valid concern, a false positive, or overstated in severity?" Include the finding details and file context.
 
 ### Phase 4 — Final Report
 
