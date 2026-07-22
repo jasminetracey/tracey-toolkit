@@ -1,6 +1,6 @@
 ---
 description: Critical code review with findings presented as an actionable plan
-argument-hint: [target: file | folder | commit-ish (abc123 | HEAD~2 | main..HEAD | --last N)] [--tier N | --deep | --quick | --full]
+argument-hint: "[target: file | folder | commit-ish (abc123 | HEAD~2 | main..HEAD | --last N)] [--tier N | --deep | --quick | --full]"
 ---
 
 Review $ARGUMENTS using a five-reviewer committee process.
