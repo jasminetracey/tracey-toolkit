@@ -9,18 +9,20 @@ If no target is provided, review the files most recently changed in this project
 
 ## Model Selection
 
-Before starting the review, ask the user which model to use for the reviewer agents:
+Default silently to **sonnet** for all reviewer and peer-review agents — do not ask. Only ask the model question once the tier is known (Phase 0) and it's **Tier 4 or 5**:
 
 > Which model should the reviewers use?
 > 1. **opus** — most thorough, slowest
 > 2. **sonnet** — good balance (default)
 > 3. **haiku** — fastest, least detailed
 
-Use their choice for all reviewer agents (Phase 2) and peer review agents (Phase 3). Default to sonnet if the user doesn't specify.
+Use their choice for all reviewer agents (Phase 2) and peer review agents (Phase 3) in that run.
 
 ## Stack Context
 
-I work across two main stacks. **Detect which one this project uses** before reviewing (check `composer.json`, `package.json`, and the directory layout) and apply the matching conventions. A project may mix both (e.g. Craft + Vue islands), so apply whichever conventions are relevant to the files under review.
+I work across two main stacks. **Detect which one this project uses once**, before spawning any reviewer (check `composer.json`, `package.json`, and the directory layout) — don't re-detect per reviewer. A project may mix both (e.g. Craft + Vue islands), so note whichever conventions are relevant to the files under review.
+
+When spawning Phase 2 agents, give each one only the matching subsection(s) below (e.g. just "Laravel" + "House frontend standards" for a Blade-only diff), not this entire multi-stack document — the full set only gets read once, by you, at detection time.
 
 **Detection hints:**
 - **Craft CMS** — `craftcms/cms` in `composer.json`, a `templates/` dir with `.twig` files, `config/general.php`
