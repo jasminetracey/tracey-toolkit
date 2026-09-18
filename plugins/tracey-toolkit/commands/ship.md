@@ -24,7 +24,12 @@ Follow these steps exactly. **Never commit work I have not reviewed** (per globa
 - Message format: **ticket number first, then imperative subject**, e.g. `#264 Add SEO to text page`, `RCOMM-6607 Implement new nav design`. Keep it scoped to one logical change; split into multiple commits if the work spans multiple tickets.
 - **No attribution trailers.** Never add `Co-authored-by`, "Generated with Claude", or any AI attribution to the commit message or PR body. All work is authored solely by me.
 
-## 4. Push & PR
+## 4. Verify locally, then confirm before pushing (do not skip)
+- After committing, **stop and let me verify the work locally** (run it, click through, check the browser). Do **not** push automatically.
+- Ask: "Committed. Verify locally, then should I push and open the PR?" and **wait for my explicit yes** before doing anything in step 5. I have been burned by auto-push before verifying; never push on your own initiative.
+- If I've already told you in this session that I've verified (or say "push"/"ship it"), proceed.
+
+## 5. Push & PR
 - Push the current branch.
 - Open the PR against the target branch from step 1 with `gh pr create`.
 - Keep the body lean — developers review these; skip redundant or obvious detail. Use exactly this shape:

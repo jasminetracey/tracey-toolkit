@@ -64,6 +64,18 @@ Adherence to stack conventions is a first-class concern in every review. Always 
 - **AlpineJS / Alpine UI components** before hand-rolled JS interactivity
 - **Match the design exactly** — exact tokens from Figma, verified against stated breakpoints
 
+### Accessibility (WCAG): apply on any frontend diff
+
+Whenever the diff touches markup or components (`.twig`, `.vue`, `.blade.php`, HTML, or JS that renders/toggles DOM), run the `wcag-review` skill's checklist as part of the review and flag violations as first-class findings (severity per impact). Do not skip this because the change is "just styling". Interactive and structural markup changes are where a11y regresses. Cover at minimum:
+
+- **Structure**: sequential heading order (no `h2` to `h4` skips), semantic elements over `div`/`span` with handlers, one `h1`, landmarks present.
+- **Keyboard & focus**: everything reachable/operable by keyboard; visible focus not removed; modals/menus move focus in, trap it, and restore on close (prefer Alpine UI primitives over hand-rolled traps).
+- **Announcements**: field errors associated via `aria-describedby`; dynamic messages in a live region (`aria-live`/`role="alert"`); icon-only controls have an accessible name.
+- **Forms**: every input has an associated `<label>`; state conveyed via `aria-required`/`aria-invalid`, not color alone.
+- **Visual**: contrast ≥ 4.5:1 (3:1 large); meaningful `alt` (or `alt=""` if decorative); never color alone to convey meaning.
+
+Load the full checklist from the `wcag-review` skill rather than reproducing it here.
+
 ## Review Ambition
 
 Reviewers must look for **code judo** moves — restructurings that **delete** complexity rather than rearranging it. Do not stop at "this could be cleaner." Actively search for reframings where whole branches, helpers, modes, conditionals, or layers disappear entirely. Prefer the solution that makes the code feel inevitable in hindsight.
